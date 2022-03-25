@@ -1,0 +1,4 @@
+%%% ^^^ &&&
+! @ # _
+hello, world
+this is a last error file!
