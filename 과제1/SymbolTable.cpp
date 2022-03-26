@@ -1,3 +1,11 @@
+/*
+    컴파일러 과제1
+    김민주, 하승진
+    
+    기여도
+    -김민주 : 1/2(50%)
+    -하승진 : 1/2(50%)
+*/
 
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
@@ -37,6 +45,7 @@ ERRORtypes errr;                // 현재 에러를 담고 있는 변수
 int found; // id의 이전 occurrence
 int sameid; // id의 첫번째 index
 
+//하승진
 //error 상황에 따라 error 내용 출력
 void PrintError() {
     if (errr == noerror) return;
@@ -64,6 +73,7 @@ void PrintError() {
     return;
 }
 
+//김민주
 // 초기화 - 입력 파일 열기
 void initialize() {
     fp = fopen(FILE_NAME, "r");
@@ -75,6 +85,7 @@ void initialize() {
     input = fgetc(fp);
 }
 
+//하승진
 // seperator 구분
 int isSeperator(char c) {
     int i;
@@ -88,7 +99,7 @@ int isSeperator(char c) {
     return 0;
 }
 
-
+//하승진
 //구분자들은 스킵하고 다음 identifier 시작위치까지 이동
 void SkipSeperators() {
     while (input != EOF && !(isLetter(input) || isDigit(input))) {
@@ -100,6 +111,7 @@ void SkipSeperators() {
     }
 }
 
+//김민주
 //identifier 읽기
 void ReadID() {
     errr = noerror;
@@ -149,7 +161,7 @@ void ReadID() {
 
 
 
-
+//하승진
 // id의 hash code 계산
 int ComputeHS(int start, int end) {
     int asciisum = 0;
@@ -159,6 +171,7 @@ int ComputeHS(int start, int end) {
     return asciisum % HTsize;
 }
 
+//김민주
 //hash table(HT)안에 존재하는지 여부 확인 
 void LookupHS(int hscode, int start, int end) {
     found = 0;
@@ -173,6 +186,7 @@ void LookupHS(int hscode, int start, int end) {
     }//존재하지 않는 경우
 }
 
+//하승진
 //새로운 id HT에 추가 
 void ADDHT(int hscode) {
     HTentry* hte = (HTentry*)malloc(sizeof(HTentry));
@@ -193,6 +207,7 @@ void ADDHT(int hscode) {
     }
 }
 
+// 함께 논의하여 작성
 // heading 출력
 void printHeading() {
     printf("------------\t------------\n");
@@ -202,7 +217,8 @@ void printHeading() {
     printf("------------\t------------\n");
 }
 
-//HS table 
+//김민주
+//HS table 출력
 void PrintHStable() {
     printf("\n\n[[ HASH TABLE ]]\n\n");
 
@@ -222,6 +238,7 @@ void PrintHStable() {
     printf("\n<%d characters are used in the string table>\n", nextfree);
 }
 
+//함께 논의하여 작성 
 int main() {
     initialize(); //파일열기
     printHeading();
