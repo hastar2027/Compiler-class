@@ -1,15 +1,16 @@
+
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define FILE_NAME "testdata1.txt"
+#define FILE_NAME "testdata1.txt" //파일 이름
 
 #define STsize 30 // string table 크기
 #define HTsize 100 // hash table 크기
 
-#define isLetter(x) ( ((x) >= 'a' && (x) <='z') || ((x) >= 'A' && (x) <= 'Z') ||((x)=='_'))
-#define isDigit(x) ( (x) >= '0' && (x) <= '9' )
+#define isLetter(x) ( ((x) >= 'a' && (x) <='z') || ((x) >= 'A' && (x) <= 'Z') ||((x)=='_')) //문자(알파벳 및 _) 확인 함수
+#define isDigit(x) ( (x) >= '0' && (x) <= '9' ) //숫자 확인 함수
 
 typedef struct HTentry* HTpointer;
 typedef struct HTentry {
@@ -18,7 +19,7 @@ typedef struct HTentry {
 } HTentry;
 
 typedef enum errorTypes {
-    noerror, illsp, firstdigit, illid, longid, overst // 에러없음, seperator 에러, 숫자로 시작, id 에러, 12자 초과 id, 오버플로우        
+    noerror, illsp, firstdigit, illid, longid, overst // 에러없음, seperator 에러(구분자가 연속하여 들어옴), 숫자로 시작, id 에러, 12자 초과 id, 오버플로우        
 }ERRORtypes;
 
 char ST[STsize];        
@@ -26,7 +27,7 @@ HTpointer HT[HTsize];
 
 FILE* fp; // FILE pointer               
 
-char seperators[] = " .,;:?!\t\n";
+char seperators[] = " .,;:?!\t\n"; //구분자
 
 char input;                    // 현재 읽고 있는 character
 char illid_char;                    // illid 에러에 해당하는 character
@@ -36,7 +37,7 @@ ERRORtypes errr;                // 현재 에러를 담고 있는 변수
 int found; // id의 이전 occurrence
 int sameid; // id의 첫번째 index
 
-
+//error 상황에 따라 error 내용 출력
 void PrintError() {
     if (errr == noerror) return;
 
@@ -102,10 +103,10 @@ void SkipSeperators() {
 //identifier 읽기
 void ReadID() {
     errr = noerror;
-    int invalid_flag = 0;    // 올바르지 않은 character가 있었는지 여부
+    int invalid_flag = 0;    // 올바르지 않은 character가 존재하는지 체크
     int len = 0;        // identifier 길이
 
-    // 숫자로 시작하는 에러 체크
+    // 첫 문자가 숫자인 경우 에러 체크 
     if (isDigit(input)) errr = firstdigit;
 
     // identifier 끝까지 읽기
@@ -118,7 +119,8 @@ void ReadID() {
 
         // 올바르지 않은 character있는지 확인
         if (!isLetter(input) && !isDigit(input)) {
-            // 올바르지 않은 character가 여러 개 있을 경우 첫번째 것만 출력
+            // 올바르지 않은 character가 여러 개 있을 경우
+            // 첫번째 것만 출력
             if (invalid_flag == 0) {
                 illid_char = input;
                 invalid_flag = 1;
@@ -132,7 +134,7 @@ void ReadID() {
         input = fgetc(fp);
     }
 
-    // identifier 마지막에 널문자 추가
+    // id 마지막에 null(\0)문자 추가
     if (nextfree >= STsize)
         errr = overst;
     else
@@ -148,7 +150,7 @@ void ReadID() {
 
 
 
-/* 해시함수 */
+// id의 hash code 계산
 int ComputeHS(int start, int end) {
     int asciisum = 0;
     for (int i = start; i < end; i++) {
@@ -157,7 +159,7 @@ int ComputeHS(int start, int end) {
     return asciisum % HTsize;
 }
 
-/* HT 내 존재 여부 확인 */
+//hash table(HT)안에 존재하는지 여부 확인 
 void LookupHS(int hscode, int start, int end) {
     found = 0;
     HTpointer p = HT[hscode];
@@ -171,7 +173,7 @@ void LookupHS(int hscode, int start, int end) {
     }//존재하지 않는 경우
 }
 
-/* HT에 추가 */
+//새로운 id HT에 추가 
 void ADDHT(int hscode) {
     HTentry* hte = (HTentry*)malloc(sizeof(HTentry));
     if (hte == NULL) {
@@ -188,7 +190,7 @@ void ADDHT(int hscode) {
     else {
         hte->next = p;
         HT[hscode] = hte;
-    }//chain의 head에 추가해야함
+    }
 }
 
 // heading 출력
@@ -200,6 +202,7 @@ void printHeading() {
     printf("------------\t------------\n");
 }
 
+//HS table 
 void PrintHStable() {
     printf("\n\n[[ HASH TABLE ]]\n\n");
 
@@ -245,19 +248,20 @@ int main() {
                 printf("%-20s", ST + nextid);
                 printf("\t%s", "(entered)");
                 ADDHT(hscode);
-                nextid = nextfree;
+                nextid = nextfree; //id 삽입
             }
-            // 이미 존재
+            // 이미 존재하는 경우
             else {
                 printf("%d\t\t", sameid);
                 printf("%-20s", ST + nextid);
                 printf("\t%s", "(already existed)");
-                nextfree = nextid;
+                nextfree = nextid; //id 삭제
             }
             printf("\n");
         }
+        //오류가 
         else {
-            nextfree = nextid;
+            nextfree = nextid; //id 삽입
         }
 
     }
