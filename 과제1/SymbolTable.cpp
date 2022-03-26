@@ -259,7 +259,7 @@ int main() {
             }
             printf("\n");
         }
-        //오류가 
+        //오류가 발생한 경우
         else {
             nextfree = nextid; //id 삽입
         }
