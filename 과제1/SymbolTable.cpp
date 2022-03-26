@@ -1,7 +1,7 @@
 /*
     컴파일러 과제1
     김민주, 하승진
-    
+
     기여도
     -김민주 : 1/2(50%)
     -하승진 : 1/2(50%)
@@ -14,7 +14,7 @@
 
 #define FILE_NAME "testdata1.txt" //파일 이름
 
-#define STsize 30 // string table 크기
+#define STsize 1000 // string table 크기
 #define HTsize 100 // hash table 크기
 
 #define isLetter(x) ( ((x) >= 'a' && (x) <='z') || ((x) >= 'A' && (x) <= 'Z') ||((x)=='_')) //문자(알파벳 및 _) 확인 함수
@@ -30,8 +30,8 @@ typedef enum errorTypes {
     noerror, illsp, firstdigit, illid, longid, overst // 에러없음, seperator 에러(구분자가 연속하여 들어옴), 숫자로 시작, id 에러, 12자 초과 id, 오버플로우        
 }ERRORtypes;
 
-char ST[STsize];        
-HTpointer HT[HTsize];   
+char ST[STsize];
+HTpointer HT[HTsize];
 
 FILE* fp; // FILE pointer               
 
@@ -53,7 +53,7 @@ void PrintError() {
     printf("[Error]\t");
 
     switch (errr) {
-    case illsp:
+    case illsp: // 올바르지 않은 seperator
         printf("%c is illegal seperator\n", input);
         break;
     case longid:
@@ -62,10 +62,10 @@ void PrintError() {
     case firstdigit:
         printf("%-20s start with digit\n", ST + nextid);
         break;
-    case illid:
+    case illid: // 올바르지 않은 id
         printf("%-20s\t%c is not allowed\n", ST + nextid, illid_char);
         break;
-    case overst:
+    case overst: // ST 내 overflow
         printf("\tOVERFLOW\n");
         break;
     }
@@ -86,7 +86,7 @@ void initialize() {
 }
 
 //하승진
-// seperator 구분
+// seperator(space, tab, newline, ., ;, :, ?, !)인지 확인
 int isSeperator(char c) {
     int i;
     int sep_len;
@@ -103,7 +103,7 @@ int isSeperator(char c) {
 //구분자들은 스킵하고 다음 identifier 시작위치까지 이동
 void SkipSeperators() {
     while (input != EOF && !(isLetter(input) || isDigit(input))) {
-        if (!isSeperator(input)) {
+        if (!isSeperator(input)) { // 올바르지 않은 seperator이면, 에러 메시지 출력
             errr = illsp;
             PrintError();
         }
@@ -256,23 +256,23 @@ int main() {
         }
 
         if (input != EOF && errr == noerror) {
-            int hscode = ComputeHS(nextid, nextfree);
-            LookupHS(hscode, nextid, nextfree);
+            int hscode = ComputeHS(nextid, nextfree); // hashcode 계산
+            LookupHS(hscode, nextid, nextfree); // hashtable HT[hashcode]에서 id 찾아보기
 
-            // 새로 삽입
-            if (!found) {
-                printf("%d\t\t", nextid);
-                printf("%-20s", ST + nextid);
+            // 이미 존재하지 않는 경우
+            if (!found) { 
+                printf("%d\t\t", nextid); // ST에서의 인덱스 출력
+                printf("%-20s", ST + nextid); // id 출력
                 printf("\t%s", "(entered)");
-                ADDHT(hscode);
-                nextid = nextfree; //id 삽입
+                ADDHT(hscode); // list에 새로운 id 가리키는 새로운 element 삽입
+                nextid = nextfree; 
             }
             // 이미 존재하는 경우
             else {
-                printf("%d\t\t", sameid);
+                printf("%d\t\t", sameid); // 일치하는 id의 ST-index 출력
                 printf("%-20s", ST + nextid);
                 printf("\t%s", "(already existed)");
-                nextfree = nextid; //id 삭제
+                nextfree = nextid; //id를 ST에서 삭제
             }
             printf("\n");
         }
