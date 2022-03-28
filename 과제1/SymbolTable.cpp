@@ -3,8 +3,8 @@
     김민주, 하승진
 
     기여도
-    -김민주 : 1/2(50%)
-    -하승진 : 1/2(50%)
+    - 김민주 : 김민주 1/2(50%) 하승진 1/2(50%)
+    - 하승진 : 하승진 1/2(50%) 김민주 1/2(50%)
 */
 
 #define _CRT_SECURE_NO_WARNINGS
@@ -260,12 +260,12 @@ int main() {
             LookupHS(hscode, nextid, nextfree); // hashtable HT[hashcode]에서 id 찾아보기
 
             // 이미 존재하지 않는 경우
-            if (!found) { 
+            if (!found) {
                 printf("%d\t\t", nextid); // ST에서의 인덱스 출력
                 printf("%-20s", ST + nextid); // id 출력
                 printf("\t%s", "(entered)");
                 ADDHT(hscode); // list에 새로운 id 가리키는 새로운 element 삽입
-                nextid = nextfree; 
+                nextid = nextfree;
             }
             // 이미 존재하는 경우
             else {
